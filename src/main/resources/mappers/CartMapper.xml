@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.seafood.mappers.CartMapper">
+
+    <!--Integer selectCartId(@Param("userId") Integer userId);-->
+    <select id="selectCartId" resultType="int">
+        select `id`
+        from t_cart
+        where `user_id` = #{userId}
+    </select>
+
+    <!--List<CartItem> selectCartItemsById(@Param("cartId") Integer cartId);-->
+    <select id="selectCartItemsById" resultType="com.example.seafood.common.CartItemVo">
+        select t_cart_item.id,
+               t_seafood.name,
+               count,
+               t_seafood.price,
+               total_price,
+               kind,
+               provider,
+               t_cart_item.seafood_id
+        from t_cart_item
+                 left join t_seafood
+                           on t_cart_item.seafood_id = t_seafood.id
+        where cart_id =
+              (select t_cart.id
+               from t_cart
+                        left join t_user
+                                  on t_user.id = t_cart.user_id
+               where t_user.id = #{cartId})
+    </select>
+
+    <!--void insertCartItem(@Param("cartItem") CartItem cartItem);-->
+    <insert id="insertCartItem" useGeneratedKeys="true" keyProperty="id">
+        insert into t_cart_item(`id`, `name`, `count`, `price`, `total_price`, `cart_id`, `seafood_id`)
+        values (null, #{cartItem.name}, #{cartItem.count}, #{cartItem.price},
+                #{cartItem.totalPrice}, #{cartItem.cartId}, #{cartItem.seafoodId})
+    </insert>
+
+    <!--void insertCart(@Param("userId") Integer userId);-->
+    <insert id="insertCart">
+        <selectKey order="AFTER" keyProperty="id" resultType="int">
+            select @@identity
+        </selectKey>
+        insert into t_cart(`id`, `user_id`)
+        values (null, #{userId})
+    </insert>
+
+    <!--void updateCountAndPrice(@Param("count") Integer count, @Param("totalPrice") BigDecimal totalPrice,
+                             @Param("seafoodId") Integer seafoodId, @Param("cartId") Integer cartId);-->
+    <update id="updateCountAndPrice">
+        update t_cart_item
+        set `count`       = #{count},
+            `total_price` = #{totalPrice}
+        where `seafood_id` = #{seafoodId}
+          and `cart_id` = #{cartId}
+    </update>
+
+    <!--CartItem selectCartItemByCartIdAndSeafoodId(@Param("seafoodId") Integer seafoodId, @Param("cartId") Integer cartId);-->
+    <select id="selectCartItemByCartIdAndSeafoodId" resultType="com.example.seafood.pojo.CartItem">
+        select `id`, `name`, `count`, `price`, `total_price`, `cart_id`, `seafood_id`
+        from t_cart_item
+        where `cart_id` = #{cartId}
+          and `seafood_id` = #{seafoodId}
+    </select>
+
+    <!--void deleteCartItem(@Param("id") Integer id);-->
+    <delete id="deleteCartItem">
+        delete
+        from t_cart_item
+        where `id` = #{id}
+    </delete>
+
+    <!--void cleanCart(@Param("cartId") Integer cartId);-->
+    <delete id="cleanCart">
+        delete
+        from t_cart_item
+        where `cart_id` = #{cartId}
+    </delete>
+
+</mapper>

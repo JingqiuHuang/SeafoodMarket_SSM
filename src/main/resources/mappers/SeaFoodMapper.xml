@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.seafood.mappers.SeaFoodMapper">
+    <!--List<Seafood> selectSeafoodForList();-->
+    <select id="selectSeafoodForList" resultType="com.example.seafood.pojo.SeaFood">
+        select `id`,
+               `name`,
+               `provider`,
+               `price`,
+               `kind`,
+               `sales`,
+               `stock`,
+               `img_path`
+        from t_seafood
+    </select>
+
+    <!--void insertSeafood(@Param("seafood") Seafood seafood);-->
+    <insert id="insertSeafood" useGeneratedKeys="true" keyProperty="id">
+        insert into t_seafood(`id`, `name`, `provider`, `price`, `kind`, `sales`, `stock`, `img_path`)
+        values (null, #{seafood.name}, #{seafood.provider}, #{seafood.price}, #{seafood.kind}, #{seafood.sales},
+                #{seafood.stock}, #{seafood.imgPath})
+    </insert>
+
+    <!--void updateSeafood(@Param("seafood") Seafood seafood);-->
+    <update id="updateSeafood">
+        update t_seafood
+        set `name`     = #{seafood.name},
+            `provider` = #{seafood.provider},
+            `price`    = #{seafood.price},
+            `kind`     = #{seafood.kind},
+            `sales`    = #{seafood.sales},
+            `stock`    = #{seafood.stock}
+        where `id` = #{seafood.id}
+    </update>
+    <update id="updateCartItem">
+        update t_cart_item
+        set name = #{seaFood.name}
+        where seafood_id = #{seaFood.id}
+          and id is not null
+    </update>
+    <update id="updateOrderItem">
+        update t_order_item
+        set name=#{seaFood.name},
+            provider=#{seaFood.provider},
+            kind=#{seaFood.kind}
+        where seafood_id = #{seaFood.id}
+          and id is not null
+    </update>
+
+    <!--void deleteSeafood(@Param("id") Integer id);-->
+    <delete id="deleteSeafood">
+        delete
+        from t_seafood
+        where `id` = #{id}
+    </delete>
+
+    <!--Seafood selectSeafoodById(@Param("id") Integer id);-->
+    <select id="selectSeafoodById" resultType="com.example.seafood.pojo.SeaFood">
+        select `id`,
+               `name`,
+               `provider`,
+               `price`,
+               `kind`,
+               `sales`,
+               `stock`,
+               `img_path`
+        from t_seafood
+        where `id` = #{id}
+    </select>
+
+    <!--List<Seafood> selectSeafoodForScope(@Param("min") Integer min,@Param("max") Integer max);-->
+    <select id="selectSeafoodForScope" resultType="com.example.seafood.pojo.SeaFood">
+        select `id`,
+               `name`,
+               `provider`,
+               `price`,
+               `kind`,
+               `sales`,
+               `stock`,
+               `img_path`
+        from t_seafood
+        where `price` between #{min} and #{max}
+    </select>
+
+</mapper>
+
