@@ -97,9 +97,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     public void deleteById(String orderId) {
+        orderMapper.removeOrderItem(orderId);
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Order::getOrderId, orderId);
         this.remove(queryWrapper);
-
     }
 }

@@ -40,6 +40,11 @@
         set `status` = #{status}
         where `order_id` = #{orderId}
     </update>
+    <delete id="removeOrderItem">
+        delete
+        from t_order_item
+        where `order_id` = #{orderId}
+    </delete>
 
     <!--void insertOrder(@Param("order") Order order);-->
     <insert id="insertOrder">

@@ -21,4 +21,6 @@ public interface OrderMapper extends BaseMapper<Order> {
 
     List<Order> selectOrder();
 
+    void removeOrderItem(@Param("orderId") String orderId);
+
 }

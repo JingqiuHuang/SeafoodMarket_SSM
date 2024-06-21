@@ -73,7 +73,7 @@ public class OrderController {
     }
 
     //订单删除
-    @GetMapping("delete")
+    @GetMapping("remove/{orderId}")
     public ResponseData delete(@PathVariable String orderId, @RequestParam Map<String, String> map) {
         if (userService.authPwd(map)) {
             orderService.deleteById(orderId);
